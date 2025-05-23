@@ -1,259 +1,300 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
   <meta name="description" content="Unbiasing through Textual Descriptions: Mitigating Representation Bias in Video Benchmarks">
-  <meta name="keywords" content="Video Understanding, Representation Bias, Video Classification, Video Retrieval, Debiased Dataset, UTD">
-  <meta property="og:title" content="UTD Dataset: Mitigating Representation Bias in Video Benchmarks">
-  <meta property="og:description" content="A dataset with textual descriptions and debiased splits for video benchmarks.">
-  <meta property="og:image" content="assets/utd_teaser.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <title>UTD Dataset: Mitigating Representation Bias</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
   <style>
-    body {
-      font-family: sans-serif;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 2rem;
-      line-height: 1.7;
-      color: #333;
+    @media screen and (max-width: 768px) {
+      .mobile-wrap {
+        font-size: 0.9rem;
+        line-height: 1.2;
+      }
+      .mobile-wrap strong {
+        display: block;
+      }
+      .carousel-nav-left, .carousel-nav-right {
+        padding: 8px 20px !important;
+      }
+      .carousel-nav-left i, .carousel-nav-right i {
+        font-size: 16px !important;
+      }
+      .publication-links {
+        flex-direction: column !important;
+        gap: 8px !important;
+      }
+      .download-buttons {
+        flex-direction: column !important;
+        gap: 8px !important;
+      }
     }
-    h1, h2, h3 {
-      text-align: center;
+    .carousel-nav-left, .carousel-nav-right {
+      padding: 10px 60px;
     }
-    h1 {
-      font-size: 2.2rem;
+    .carousel-nav-left i, .carousel-nav-right i {
+      font-size: 20px;
     }
-    h2 {
-      font-size: 1.4rem;
-      margin-top: -10px;
-    }
-    img {
-      display: block;
-      margin: 2rem auto;
-      max-width: 100%;
-      border-radius: 10px;
-    }
-    ul {
-      padding-left: 1.2rem;
-    }
-    pre {
-      background: #f4f4f4;
-      padding: 1rem;
-      overflow-x: auto;
-      border-radius: 5px;
-    }
-    a {
-      color: #005bbb;
-      text-decoration: none;
+    .publication-links, .download-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
     }
   </style>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
-<!--  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">-->
 </head>
+
 <body>
+  <nav class="navbar" role="navigation" aria-label="main navigation" style="background-color: #f8f9fa; padding: 0rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); overflow-x: auto;">
+    <div class="container is-max-desktop">
+      <div class="navbar-brand" style="display: flex; justify-content: center; width: 100%;">
+        <a class="navbar-item" href="#abstract" style="font-weight: bold;">Abstract</a>
+        <a class="navbar-item" href="#utd-dataset" style="font-weight: bold;">UTD Dataset</a>
+        <a class="navbar-item" href="#utd-descriptions" style="font-weight: bold;">UTD-descriptions</a>
+        <a class="navbar-item" href="#utd-splits" style="font-weight: bold;">UTD-splits</a>
+        <a class="navbar-item" href="#license" style="font-weight: bold;">License</a>
+        <a class="navbar-item" href="#cite" style="font-weight: bold;">Cite Us!</a>
+      </div>
+    </div>
+  </nav>
 
-  <h1>Unbiasing through Textual Descriptions:<br>
-Mitigating Representation Bias in Video Benchmarks</h1>
-<!--  <hr>-->
-  <h3 style="margin-top: -0.5em; font-weight: normal; font-size: 1.2em; text-align: center;">CVPR 2025</h3>
-  <p style="text-align: center;">
-    <a href="https://ninatu.github.io">Nina Shvetsova<sup>1,2,3</sup><sup>*</sup></a>,
-    <a href="https://a-nagrani.github.io/">Arsha Nagrani<sup>4</sup></a>,
-    <a href="https://www.mpi-inf.mpg.de/departments/computer-vision-and-machine-learning/people/bernt-schiele">Bernt Schiele<sup>3</sup></a>,
-    <a href="https://hildekuehne.github.io/">Hilde Kuehne<sup>1,2,5</sup></a>,
-    <a href="https://chrirupp.github.io/">Christian Rupprecht<sup>4</sup></a>
-  </p>
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title publication-title" style="font-size: 2.5rem;">Unbiasing through Textual Descriptions:<br>Mitigating Representation Bias in Video Benchmarks</h1>
+            <h3 style="margin-top: -0.5em; font-weight: normal; font-size: 1.2em; text-align: center;">CVPR 2025</h3>
+            
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">
+                <a href="https://ninatu.github.io">Nina Shvetsova<sup>1,2,3</sup><sup>*</sup></a>,
+              </span>
+              <span class="author-block">
+                <a href="https://a-nagrani.github.io/">Arsha Nagrani<sup>4</sup></a>,
+              </span>
+              <span class="author-block">
+                <a href="https://www.mpi-inf.mpg.de/departments/computer-vision-and-machine-learning/people/bernt-schiele">Bernt Schiele<sup>3</sup></a>,
+              </span>
+              <span class="author-block">
+                <a href="https://hildekuehne.github.io/">Hilde Kuehne<sup>1,2,5</sup></a>,
+              </span>
+              <span class="author-block">
+                <a href="https://chrirupp.github.io/">Christian Rupprecht<sup>4</sup></a>
+              </span>
+            </div>
 
-  <p style="text-align: center; font-size: 0.95em;">
-    <sup>1</sup>Goethe University Frankfurt,
-    <sup>2</sup>Tuebingen AI Center/University of Tuebingen,
-    <sup>3</sup>MPI for Informatics, Saarland Informatics Campus,
-    <sup>4</sup>University of Oxford,
-    <sup>5</sup>MIT-IBM Watson AI Lab
-  </p>
+            <div class="is-size-5 publication-authors">
+              <span class="author-block"><sup>1</sup>Goethe University Frankfurt, </span>
+              <span class="author-block"><sup>2</sup>Tuebingen AI Center/University of Tuebingen, </span>
+              <span class="author-block"><sup>3</sup>MPI for Informatics, Saarland Informatics Campus, </span>
+              <span class="author-block"><sup>4</sup>University of Oxford, </span>
+              <span class="author-block"><sup>5</sup>MIT-IBM Watson AI Lab</span>
+            </div>
 
-  <p style="text-align: center; font-size: 0.9em; margin-top: -0.7em;">
-    <strong>*</strong>Work done during PhD visit to University of Oxford within the ELLIS PhD program.
-  </p>
+            <div class="is-size-5 publication-authors">
+              <span class="author-block"><sup>*</sup>Work done during PhD visit to University of Oxford within the ELLIS PhD program</span>
+            </div>
 
-  <p style="text-align: center; font-size: 0.9em;">
-    Contact: shvetsov at uni-frankfurt.de
-  </p>
+            <div class="is-size-6 publication-authors" style="margin-top: 1.5rem;">
+              <span class="author-block">Contact: shvetsov at uni-frankfurt.de</span>
+            </div>
 
+            <div class="column has-text-centered">
+              <div class="publication-links" style="margin-bottom: 0;">
+                <span class="link-block">
+                  <a href="https://arxiv.org/abs/2503.18637" target="_blank" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                    </span>
+                    <span>arXiv</span>
+                  </a>
+                </span>
+                <span class="link-block">
+                  <a href="https://github.com/ninatu/utd-project" target="_blank" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fab fa-github"></i>
+                    </span>
+                    <span>Code & Models (coming soon)</span>
+                  </a>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
+  <section class="hero teaser">
+    <div class="container is-max-desktop">
+      <div class="hero-body">
+        <div class="columns is-centered">
+          <div class="column is-10">
+            <img src="static/images/utd_teaser.png" alt="UTD teaser image" style="width: 100%; max-width: 1200px; margin: 0 auto; display: block;">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<!--<br>-->
-<div style="text-align: center; font-size: 0.95em; margin-top: -0.3em;">
-  <!-- ArXiv abstract Link -->
-  <span class="link-block" style="margin-right: 10px;">
-    <a href="https://arxiv.org/abs/2503.18637" target="_blank" class="external-link" style="text-decoration: none;">
-      <span class="icon">
-        <i class="ai ai-arxiv"></i>
-      </span>
-      <span>arXiv</span>
-    </a>
-  </span>
+  <hr style="border: 1px solid #e0e0e0; margin: 20px auto; width: 50%;">
 
-  <!-- GitHub link -->
-  <span class="link-block">
-    <a href="https://github.com/ninatu/utd-project" target="_blank" class="external-link" style="text-decoration: none;">
-      <span class="icon">
-        <i class="fab fa-github"></i>
-      </span>
-      <span>Code & Models (coming soon)</span>
-    </a>
-  </span>
-</div>
+  <section class="section pt-0" id="abstract">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3 has-text-centered" style="padding-top: 20px;">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+              <span style="background: linear-gradient(transparent 0%, #fff9c4 100%);"><strong>We propose a new Unbiased through Textual Description (UTD) video benchmark to enable more robust assessment of video understanding capabilities.</strong></span>
+              Current video benchmarks often suffer from representation biases, such as object bias or single-frame bias, where mere recognition of objects or utilization of only a single frame is sufficient for correct prediction. We leverage VLMs and LLMs to analyze and debias video benchmarks across three dimensions: 1) concept bias — determining if specific concepts (e.g., objects) alone suffice for prediction; 2) temporal bias — assessing if temporal information contributes to prediction; and 3) common sense vs. dataset bias — evaluating whether zero-shot reasoning or dataset correlations contribute to prediction. 
+              <span style="background: linear-gradient(transparent 0%, #fff9c4 100%);"><strong>We conduct a systematic analysis of representation biases in 12 popular video classification and retrieval datasets and create new object-debiased test splits. 
+              We benchmark 33 state-of-the-art video models on original and debiased splits and analyze biases in the models. 
+              To facilitate future development, we release: <strong>UTD-descriptions</strong>, a dataset with rich structured descriptions (~2M videos across 12 datasets), 
+              and <strong>UTD-splits</strong>, a dataset of object-debiased test splits.</strong></span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<!--  <br>-->
-<!--<div style="text-align: center; font-size: 0.95em; margin-top: -0.3em;">-->
-<!--  &lt;!&ndash; GitHub link (inactive) &ndash;&gt;-->
-<!--  <span class="link-block" style="margin-right: 10px; opacity: 0.6; cursor: not-allowed;">-->
-<!--    <a href="#" class="external-link" style="text-decoration: none; pointer-events: none; cursor: not-allowed;">-->
-<!--      <span class="icon">-->
-<!--        <i class="fab fa-github"></i>-->
-<!--      </span>-->
-<!--      <span>Code & Models (coming soon)</span>-->
-<!--    </a>-->
-<!--  </span>-->
+  <hr style="border: 1px solid #e0e0e0; margin: 20px auto; width: 50%;">
 
-<!--  &lt;!&ndash; arXiv link (inactive) &ndash;&gt;-->
-<!--  <span class="link-block" style="opacity: 0.6; cursor: not-allowed;">-->
-<!--    <a href="#" class="external-link" style="text-decoration: none; pointer-events: none; cursor: not-allowed;">-->
-<!--      <span class="icon">-->
-<!--        <i class="ai ai-arxiv"></i>-->
-<!--      </span>-->
-<!--      <span>arXiv (coming soon)</span>-->
-<!--    </a>-->
-<!--  </span>-->
-<!--</div>-->
+  <section class="section pt-0" id="utd-dataset">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3 has-text-centered" style="padding-top: 20px;">UTD Dataset</h2>
+          
+          <div class="content has-text-justified">
+            <p style="margin-top: 1em; text-align: center; font-size: 16px;">
+              ⬇ <a href="https://drive.google.com/file/d/1tfycxqhk0Yxfev-BFOhB17g4bjWbUxln/view?usp=sharing" target="_blank" style="text-decoration: none; font-weight: 500;">Download UTD-descriptions</a> (3.5G) |
+              ⬇ <a href="https://drive.google.com/file/d/15d6L3KFmp0T_ppPkfQAh_FGX9j3Z6Tap/view?usp=sharing" target="_blank" style="text-decoration: none; font-weight: 500;">Download UTD-splits</a> (3.9M) |
+              ⬇ <a href="https://drive.google.com/file/d/1_WNKqw7vkE6aHgbEABO00y_IWxt3mOgu/view?usp=sharing" target="_blank" style="text-decoration: none; font-weight: 500;">Download all data</a> (7.4G)
+            </p>
 
+            <p style="text-align: justify; max-width: 960px; margin: auto;">
+              Our <strong>UTD Dataset</strong> consists of two parts:
+            </p>
+            <br>
+            <ol style="max-width: 960px; margin: auto;">
+              <li><strong>UTD-descriptions:</strong> This includes frame-level annotations of <strong>~2M videos</strong> for four conceptual categories visible in video frames:
+                <em>objects</em>, <em>activities</em>, <em>verbs</em>, and <em>objects+composition+activities</em>.
+                UTD-descriptions are provided for 8 uniformly sampled frames from the training and test/val sets of 12 activity recognition and text-to-video retrieval datasets.
+              </li>
+              <br>
+              <li><strong>UTD-splits:</strong> These include object-debiased test/val splits — subsets of the original test/val sets with object-biased items removed — for all 12 considered datasets.
+                For 6 activity recognition datasets, we additionally provide debiased-balanced splits, where the most object-biased samples are removed while preserving the original class distribution.</li>
+            </ol>
 
-  <img src="assets/utd_teaser.png" alt="UTD teaser image">
+            <br>
+            <div style="max-width: 960px; margin: auto; text-align: justify;">
+              <p><strong>Considered datasets:</strong><br>
+                Activity recognition datasets include
+                <a href="https://arxiv.org/pdf/1212.0402" target="_blank">UCF101</a>,
+                <a href="https://openaccess.thecvf.com/content_ICCV_2017/papers/Goyal_The_Something_Something_ICCV_2017_paper.pdf" target="_blank">SSv2</a>,
+                <a href="https://arxiv.org/pdf/1705.06950" target="_blank">Kinetics400</a>,
+                <a href="https://arxiv.org/pdf/1808.01340" target="_blank">Kinetics600</a>,
+                <a href="https://arxiv.org/pdf/1907.06987" target="_blank">Kinetics700</a>,
+                and <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=8651343" target="_blank">Moments In Time</a>.
+                <br>
+                Text-to-video retrieval datasets include
+                <a href="https://openaccess.thecvf.com/content_cvpr_2016/papers/Xu_MSR-VTT_A_Large_CVPR_2016_paper.pdf" target="_blank">MSRVTT</a>,
+                <a href="http://youcook2.eecs.umich.edu/static/YouCookII/youcookii_readme.pdf" target="_blank">YouCook2</a>,
+                <a href="https://openaccess.thecvf.com/content_ICCV_2017/papers/Hendricks_Localizing_Moments_in_ICCV_2017_paper.pdf" target="_blank">DiDeMo</a>,
+                <a href="https://openaccess.thecvf.com/content_cvpr_2015/papers/Rohrbach_A_Dataset_for_2015_CVPR_paper.pdf" target="_blank">LSMDC</a>,
+                <a href="https://openaccess.thecvf.com/content_cvpr_2015/papers/Heilbron_ActivityNet_A_Large-Scale_2015_CVPR_paper.pdf" target="_blank">ActivityNet</a>,
+                and <a href="https://openaccess.thecvf.com/content/CVPR2021/papers/Monfort_Spoken_Moments_Learning_Joint_Audio-Visual_Representations_From_Video_Descriptions_CVPR_2021_paper.pdf" target="_blank">Spoken Moments in Time</a>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <h3>Abstract</h3>
-  <p>
-    We propose a new <strong>Unbiased through Textual Description (UTD)</strong> video benchmark based on unbiased subsets of existing video classification and retrieval datasets to enable a more robust assessment of video understanding capabilities.
-Namely, we tackle the problem that current video benchmarks may suffer from different representation biases, e.g., object bias or single-frame bias, where mere recognition of objects or utilization of only a single frame is sufficient for correct prediction.
-We leverage VLMs and LLMs to analyze and debias video benchmarks from such representation biases.
-Specifically, we generate frame-wise textual descriptions of videos, filter them for specific information (e.g. only objects) and leverage them to examine representation biases across three dimensions: 1) concept bias — determining if a specific concept (e.g., objects) alone suffice for prediction; 2) temporal bias — assessing if temporal information contributes to prediction; and 3) common sense vs. dataset bias — evaluating whether zero-shot reasoning or dataset correlations contribute to prediction.
-We conduct a systematic analysis of representation biases in 12 popular video classification and retrieval datasets and create new object-debiased test splits for these datasets. Moreover, we benchmark 33 state-of-the-art video models on original and debiased splits and analyze biases in the models.
-To facilitate the future development of more robust video understanding benchmarks and models, we release: <strong>UTD-descriptions</strong>, a dataset with our rich structured descriptions for each dataset, and <strong>UTD-splits</strong>, a dataset of object-debiased test splits.
-  </p>
-<!--  <p>-->
-<!--    We propose a new <strong>Unbiased through Textual Description (UTD)</strong> video benchmark based on unbiased subsets of existing video classification and retrieval datasets to enable a more robust assessment of video understanding capabilities.-->
-<!--    Current video benchmarks suffer from <em>representation biases</em>, such as object bias (where object recognition alone suffices for classification) or temporal bias (where a single frame is enough). We leverage large vision-language models (VLMs) and language models (LLMs) to systematically analyze and mitigate such biases.-->
-<!--    Our dataset includes: <strong>1) UTD-descriptions</strong> – structured frame-level textual annotations and <strong>2) UTD-splits</strong> – object-debiased test/val splits across 12 video datasets.-->
-<!--  </p>-->
-<hr>
-  <br>
-  <h2>UTD Dataset</h2>
-  <p style="margin-top: 1em; text-align: center; font-size: 16px;">
-  ⬇ <a href="https://drive.google.com/file/d/1tfycxqhk0Yxfev-BFOhB17g4bjWbUxln/view?usp=sharing" target="_blank" style="text-decoration: none; font-weight: 500;">Download UTD-descriptions</a> (3.5G) |
-  ⬇ <a href="https://drive.google.com/file/d/15d6L3KFmp0T_ppPkfQAh_FGX9j3Z6Tap/view?usp=sharing" target="_blank" style="text-decoration: none; font-weight: 500;">Download UTD-splits</a> (3.9M) |
-    ⬇ <a href="https://drive.google.com/file/d/1_WNKqw7vkE6aHgbEABO00y_IWxt3mOgu/view?usp=sharing" target="_blank" style="text-decoration: none; font-weight: 500;">Download all data </a> (7.4G)
-</p>
+  <hr style="border: 1px solid #e0e0e0; margin: 20px auto; width: 50%;">
 
+  <section class="section pt-0" id="utd-descriptions">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3 has-text-centered" style="padding-top: 20px;">UTD-descriptions</h2>
+          <div class="content has-text-justified">
+            <p>
+              <strong>UTD-descriptions</strong> provide annotations for a total of <strong>~2M videos</strong>, with <strong>8 uniformly sampled frames annotated per video</strong>. Each frame is annotated with four different concept categories:
+              <strong>objects</strong>, <strong>activities</strong>, <strong>verbs</strong>, and <strong>objects+composition+activities</strong>
+              for the 12 considered datasets, covering both train and test/val splits. For test/val splits,
+              we additionally provide <strong>objects+composition+activities_15_words</strong> — a ~15-words summary
+              of <em>objects+composition+activities</em> descriptions. The annotations for <em>objects+composition+activities</em> are generated using the
+              <a href="https://github.com/haotian-liu/LLaVA/blob/main/docs/MODEL_ZOO.md" target="_blank">LLaVA-1.6-7B-mistral</a> large vision-language model, prompted to describe visible object relationships in a frame.
+              From these descriptions, <em>objects</em>, <em>activities</em>, and <em>verbs</em> (activities without associated objects) are extracted using
+              the <a href="https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2" target="_blank">Mistral-7B-Instruct-v0.2</a>.
+            </p>
 
+            <p>
+              We follow the standard train/test/val splits of each dataset. Namely, we use validation sets for
+              SSv2, Kinetics400, Kinetics600, Kinetics700, Moments In Time, YouCook2, and ActivityNet, and test sets for UCF101 (testlist01), MSRVTT (1k test set),
+              DiDeMo, LSMDC, and Spoken Moments in Time.
+            </p>
 
-<p style="text-align: justify; max-width: 960px; margin: auto;">
-Our <strong>UTD Dataset</strong> consists of two parts:
-</p>
-<br>
-<ol style="max-width: 960px; margin: auto;">
-  <li><strong>UTD-descriptions:</strong> This includes frame-level annotations of <strong>1.9M videos</strong> for four conceptual categories visible in video frames:
-    <em>objects</em>, <em>activities</em>, <em>verbs</em>, and <em>objects+composition+activities</em>.
-    UTD-descriptions are provided for 8 uniformly sampled frames from the training and test/val sets of 12 activity recognition and text-to-video retrieval datasets.
+            <p>
+              For each video, 8 frames are annotated — one from the center of each of 8 equal temporal segments.
+              Note: due to the large size and video overlap in the MiT and S-MiT training sets, we annotate approx.
+              300k training videos shared between them. All other datasets have full training annotations.
+            </p>
+            <p>
+              We also share <strong>UTD-descriptions-raw</strong>: a version that stores raw outputs from
+              VLM and LLM models for each concept category. In the curated UTD-descriptions version, we post-process
+              textual descriptions by removing bracketed content and numbering.
+            </p>
 
-  </li>
-  <br>
-  <li><strong>UTD-splits:</strong> These include object-debiased test/val splits — subsets of the original test/val sets with object-biased items removed  — for all 12 considered datasets.
-  For 6 activity recognition datasets,
-we additionally provide debiased-balanced splits, where the most object-biased samples are removed
-while preserving the original class distribution.</li>
-</ol>
+            <p style="margin-top: 1em; text-align: center; font-size: 16px;">
+              ⬇ <a href="https://drive.google.com/file/d/1tfycxqhk0Yxfev-BFOhB17g4bjWbUxln/view?usp=sharing" target="_blank" style="text-decoration: none; font-weight: 500;">Download UTD-descriptions</a> (3.5G) |
+              ⬇ <a href="https://drive.google.com/file/d/14sX-weKWF08lYRzFUv3Nm-vrUGgNeS1O/view?usp=sharing" target="_blank" style="text-decoration: none; font-weight: 500;">Download UTD-descriptions-raw</a> (3.9G)
+            </p>
 
+            <div style="margin-top: 3rem;"></div>
 
-<br>
-<div style="max-width: 960px; margin: auto; text-align: justify;">
-<p><strong>Considered datasets:</strong><br>
-Activity recognition datasets include
-<a href="https://arxiv.org/pdf/1212.0402" target="_blank">UCF101</a>,
-<a href="https://openaccess.thecvf.com/content_ICCV_2017/papers/Goyal_The_Something_Something_ICCV_2017_paper.pdf" target="_blank">SSv2</a>,
-<a href="https://arxiv.org/pdf/1705.06950" target="_blank">Kinetics400</a>,
-<a href="https://arxiv.org/pdf/1808.01340" target="_blank">Kinetics600</a>,
-<a href="https://arxiv.org/pdf/1907.06987" target="_blank">Kinetics700</a>,
-and <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=8651343" target="_blank">Moments In Time</a>.
-<br>
-Text-to-video retrieval datasets include
-<a href="https://openaccess.thecvf.com/content_cvpr_2016/papers/Xu_MSR-VTT_A_Large_CVPR_2016_paper.pdf" target="_blank">MSRVTT</a>,
-<a href="http://youcook2.eecs.umich.edu/static/YouCookII/youcookii_readme.pdf" target="_blank">YouCook2</a>,
-<a href="https://openaccess.thecvf.com/content_ICCV_2017/papers/Hendricks_Localizing_Moments_in_ICCV_2017_paper.pdf" target="_blank">DiDeMo</a>,
-<a href="https://openaccess.thecvf.com/content_cvpr_2015/papers/Rohrbach_A_Dataset_for_2015_CVPR_paper.pdf" target="_blank">LSMDC</a>,
-<a href="https://openaccess.thecvf.com/content_cvpr_2015/papers/Heilbron_ActivityNet_A_Large-Scale_2015_CVPR_paper.pdf" target="_blank">ActivityNet</a>,
-and <a href="https://openaccess.thecvf.com/content/CVPR2021/papers/Monfort_Spoken_Moments_Learning_Joint_Audio-Visual_Representations_From_Video_Descriptions_CVPR_2021_paper.pdf" target="_blank">Spoken Moments in Time</a>.
-</p>
-</div>
+            <h4 class="title is-5 has-text-centered" style="margin-bottom: 2rem;">How To Use</h4>
+            <div class="content has-text-justified">
+              <p>
+                Each file is a <code>.json</code> file containing a dictionary with video IDs as keys. For each video ID,
+                the values include:
+              </p>
+              <ul>
+                <li><code>objects+composition+activities</code>: list of 8 textual descriptions (one per frame)</li>
+                <li><code>objects</code>: list of object-level descriptions per frame</li>
+                <li><code>activities</code>: list of activity descriptions per frame</li>
+                <li><code>verbs</code>: list of activity descriptions without objects per frame</li>
+                <li><code>objects+composition+activities_15_words</code>: <strong>(test/val only)</strong> a ~15-word summary per frame</li>
+              </ul>
 
-<!--<hr>-->
-<h3 style="text-align: center;">UTD-descriptions</h3>
-
-<div style="max-width: 960px; margin: auto; text-align: justify; font-size: 16px; line-height: 1.6;">
-  <p>
-    <strong>UTD-descriptions</strong> provide annotations for a total of <strong>1.9M videos</strong>, with <strong>8 uniformly sampled frames annotated per video</strong>. Each frame is annotated with four different concept categories:
-    <strong>objects</strong>, <strong>activities</strong>, <strong>verbs</strong>, and <strong>objects+composition+activities</strong>
-    for the 12 considered datasets, covering both train and test/val splits. For test/val splits,
-    we additionally provide <strong>objects+composition+activities_15_words</strong> — a ~15-words summary
-    of <em>objects+composition+activities</em> descriptions. The annotations for <em>objects+composition+activities</em> are generated using the
-    <a href="https://github.com/haotian-liu/LLaVA/blob/main/docs/MODEL_ZOO.md" target="_blank">LLaVA-1.6-7B-mistral</a> large vision-language model, prompted to describe visible object relationships in a frame.
-    From these descriptions, <em>objects</em>, <em>activities</em>, and <em>verbs</em> (activities without associated objects) are extracted using
-    the <a href="https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2" target="_blank">Mistral-7B-Instruct-v0.2</a>.
-  </p>
-
-  <p>
-    We follow the standard train/test/val splits of each dataset. Namely, we use validation sets for
-    SSv2, Kinetics400, Kinetics600, Kinetics700, Moments In Time, YouCook2, and ActivityNet, and test sets for UCF101 (testlist01), MSRVTT (1k test set),
-    DiDeMo, LSMDC, and Spoken Moments in Time.
-  </p>
-
-  <p>
-    For each video, 8 frames are annotated — one from the center of each of 8 equal temporal segments.
-    Note: due to the large size and video overlap in the MiT and S-MiT training sets, we annotate approx.
-    300k training videos shared between them. All other datasets have full training annotations.
-  </p>
-  <p>
-  We also share <strong>UTD-descriptions-raw</strong>: a version that stores raw outputs from
-  VLM and LLM models for each concept category. In the curated UTD-descriptions version, we post-process
-  textual descriptions by removing bracketed content and numbering.
-</p>
-</div>
-<p>
-  ⬇ <a href="https://drive.google.com/file/d/1tfycxqhk0Yxfev-BFOhB17g4bjWbUxln/view?usp=sharing" target="_blank" style="text-decoration: none; font-weight: 500;">Download UTD-descriptions</a> (3.5G) |
-  ⬇ <a href="https://drive.google.com/file/d/14sX-weKWF08lYRzFUv3Nm-vrUGgNeS1O/view?usp=sharing" target="_blank" style="text-decoration: none; font-weight: 500;">Download UTD-descriptions-raw</a> (3.9G)
-</p>
-
-
-  <h4 style="margin-top: 30px;">How To Use</h4>
-  <p>
-    Each file is a <code>.json</code> file containing a dictionary with video IDs as keys. For each video ID,
-    the values include:
-  </p>
-  <ul>
-    <li><code>objects+composition+activities</code>: list of 8 textual descriptions (one per frame)</li>
-    <li><code>objects</code>: list of object-level descriptions per frame</li>
-    <li><code>activities</code>: list of activity descriptions per frame</li>
-    <li><code>verbs</code>: list of activity descriptions without objects per frame</li>
-    <li><code>objects+composition+activities_15_words</code>: <strong>(test/val only)</strong> a ~15-word summary per frame</li>
-  </ul>
-
-  <h4>Example</h4>
-  <pre><code>import json
+              <h4>Example</h4>
+              <pre><code>import json
 with open('annotations_ucf_testlist01.json') as fin:
     data = json.load(fin)
 data['v_ApplyEyeMakeup_g01_c02']</code></pre>
-<pre><code>{
+              <pre><code>{
   'objects+composition+activities': [
     "In the photo, there is a person applying makeup, specifically eyeliner, to their eye. The person is holding a makeup brush in their right hand...",
     "In the photo, there is a person who appears to be applying makeup. The person is holding a makeup brush in their right hand..."
@@ -272,72 +313,118 @@ data['v_ApplyEyeMakeup_g01_c02']</code></pre>
     "Person applying eyeliner with brush in hand, seated near mirror and chair, suitcase behind.", ...
   ]
 }</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <h3>UTD-splits</h3>
+  <hr style="border: 1px solid #e0e0e0; margin: 20px auto; width: 50%;">
 
-  <p>
-    UTD-splits include object-debiased test/val splits for the 12 considered datasets.
-    Object-debiased splits are subsets of the original test/val sets, where videos identified as object-biased have been removed.
-    For the 6 activity recognition datasets,
-we additionally provide debiased-balanced splits, where the most object-biased samples are removed
-while preserving the original class distribution to ensure fair evaluation across categories.
+  <section class="section pt-0" id="utd-splits">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3 has-text-centered" style="padding-top: 20px;">UTD-splits</h2>
+          <div class="content has-text-justified">
+            <p>
+              UTD-splits include object-debiased test/val splits for the 12 considered datasets.
+              Object-debiased splits are subsets of the original test/val sets, where videos identified as object-biased have been removed.
+              For the 6 activity recognition datasets, we additionally provide debiased-balanced splits, where the most object-biased samples are removed
+              while preserving the original class distribution to ensure fair evaluation across categories.
+            </p>
 
-  </p>
+            <p><strong>Note:</strong> Due to unavailability of certain videos in some datasets, a small number of video IDs may be excluded entirely.</p>
 
-  <p><strong>Note:</strong> Due to unavailability of certain videos in some datasets, a small number of video IDs may be excluded entirely.</p>
+            <p style="margin-top: 1em; text-align: center; font-size: 16px;">
+              ⬇ <a href="https://drive.google.com/file/d/15d6L3KFmp0T_ppPkfQAh_FGX9j3Z6Tap/view?usp=sharing" target="_blank" style="text-decoration: none; font-weight: 500;">Download UTD-splits</a> (3.9M)
+            </p>
 
-  <p>
-  ⬇ <a href="https://drive.google.com/file/d/15d6L3KFmp0T_ppPkfQAh_FGX9j3Z6Tap/view?usp=sharing" target="_blank" style="text-decoration: none; font-weight: 500;">Download UTD-splits</a> (3.9M)
-  </p>
+            <h4 class="title is-5 has-text-centered" style="margin-bottom: 2rem;">How to Use</h4>
+            <div class="content has-text-justified">
+              <p>
+                Each file is a JSON file containing a dictionary with three keys:
+              </p>
+              <ul>
+                <li><code>full</code> – List of video IDs in the original test/val split of the corresponding dataset</li>
+                <li><code>debiased</code> – List of video IDs for the UTD-debiased test/val split, where object-biased items are removed</li>
+                <li><code>debiased-balanced</code> – List of video IDs for the UTD-debiased-balanced test/val split, where the most object-biased samples are removed while preserving the original class distribution</li>
+              </ul>
 
-
-  <h4>How to Use</h4>
-  <p>
-    Each file is a JSON file containing a dictionary with three keys:
-  </p>
-  <ul>
-    <li><code>full</code> – List of video IDs in the original test/val split of the corresponding dataset</li>
-    <li><code>debiased</code> – List of video IDs for the UTD-debiased test/val split, where object-biased items are removed</li>
-    <li><code>debiased-balanced</code> – List of video IDs for the UTD-debiased-balanced test/val split, where the most object-biased samples are removed
-while preserving the original class distribution</li>
-  </ul>
-
-  <h4>Example</h4>
-  <pre><code>import json
+              <h4>Example</h4>
+              <pre><code>import json
 with open('splits_ucf_testlist01.json') as fin:
     data = json.load(fin)
 
 print(data)</code></pre>
-
-  <pre><code>{
+              <pre><code>{
   "full": ["v_ApplyEyeMakeup_g01_c01", "v_ApplyEyeMakeup_g01_c02", ...],
   "debiased": ["v_ApplyEyeMakeup_g01_c01", "v_ApplyLipstick_g01_c03", ...],
   "debiased-balanced": ["v_ApplyEyeMakeup_g01_c01", "v_ApplyLipstick_g01_c02", ...],
 }</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<hr>
-<section id="license">
-  <h2>License</h2>
-  <p>
-    The UTD dataset is released under the <strong>Creative Commons Attribution 4.0 International (CC BY 4.0)</strong> license.<br>
-    Terms and conditions: <a href="http://creativecommons.org/licenses/by/4.0" target="_blank">http://creativecommons.org/licenses/by/4.0</a>
-  </p>
-  <p>
-    <em>Note:</em> Some parts of the underlying datasets may be subject to their own licensing terms. Please ensure compliance with the original dataset licenses.
-  </p>
-</section>
+  <hr style="border: 1px solid #e0e0e0; margin: 20px auto; width: 50%;">
 
-<hr>
-  <h2>BibTeX</h2>
-  <pre>
-@article{shvetsova2025utd,
+  <section class="section pt-0" id="license">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3 has-text-centered" style="padding-top: 20px;">License</h2>
+          <div class="content has-text-justified">
+            <p>
+              The UTD dataset is released under the <strong>Creative Commons Attribution 4.0 International (CC BY 4.0)</strong> license.<br>
+              Terms and conditions: <a href="http://creativecommons.org/licenses/by/4.0" target="_blank">http://creativecommons.org/licenses/by/4.0</a>
+            </p>
+            <p>
+              <em>Note:</em> Some parts of the underlying datasets may be subject to their own licensing terms. Please ensure compliance with the original dataset licenses.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr style="border: 1px solid #e0e0e0; margin: 20px auto; width: 50%;">
+
+  <section class="section pt-0" id="cite">
+    <div class="container is-max-desktop content">
+      <h2 class="title has-text-centered" style="padding-top: 20px;">BibTeX</h2>
+      <pre class="selectable"><code>@article{shvetsova2025utd,
   title={Unbiasing through Textual Descriptions: Mitigating Representation Bias in Video Benchmarks},
   author={Shvetsova, Nina and Nagrani, Arsha and Schiele, Bernt and Kuehne, Hilde and Rupprecht, Christian},
   booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
   year={2025}
-}
-  </pre>
+}</code></pre>
+    </div>
+  </section>
 
+  <footer class="footer pt-0 pb-0">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content">
+            <p>
+              Website template based on
+              <a href="https://github.com/nerfies/nerfies.github.io">
+                Nerfies
+              </a>
+              and licensed under
+              <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+                CC-BY-SA-4.0
+              </a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
 
 </body>
 </html>
